@@ -1,5 +1,5 @@
 import copy
-from typing import Optional, List
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -46,7 +46,7 @@ async def filtered_products(name: Optional[str] = None,
                                                    total_products=total_products)
         return ProductsWithNextSchema(products=filtered_pr, next=next_url)
     else:
-        raise HTTPException(status_code=404, detail='product not found')
+        raise HTTPException(status_code=404, detail='products not found')
 
 
 @products.post('')

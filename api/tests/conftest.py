@@ -9,7 +9,8 @@ from loguru import logger
 
 from api.tests.data.data_for_testing import products
 
-mongo_client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://smart_design_user:123456@0.0.0.0:27017/smart_design_mongo')
+mongo_client = motor.motor_asyncio.AsyncIOMotorClient(
+    'mongodb://smart_design_user:123456@0.0.0.0:27017/smart_design_mongo')
 mongo_collection = mongo_client.smart_design_mongo.products
 
 
