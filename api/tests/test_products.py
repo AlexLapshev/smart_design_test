@@ -74,6 +74,7 @@ queries = [
     ('?ram_size=4&color=green', 404, 1),
     ('?ram_size=4&screen_size=6', 200, 1),
     ('?color=black&name=x', 200, 1),
+    ('?color=black&name=x&skip=100', 404, 1),
 ]
 
 
@@ -84,4 +85,21 @@ def test_get_filtered(client, query, status, count):
     logger.debug(response.json())
     assert response.status_code == status
     if status != 404:
-        assert len(response.json()) == count
+        assert len(response.json()['products']) == count
+
+
+next_queries = [
+    ('?name=a&length=1', 200, True),
+    ('?name=Nokia', 200, False),
+    ('?name=Nokia&length=51', 400, False),
+]
+
+
+@pytest.mark.usefixtures('insert_products_in_mongo')
+@pytest.mark.parametrize('query, status, next_url', next_queries)
+def test_next_filtered(client, query, status, next_url):
+    response = client.get(test_url + query)
+    logger.debug(response.json())
+    assert response.status_code == status
+    if status != 400:
+        assert bool(response.json()['next']) == next_url

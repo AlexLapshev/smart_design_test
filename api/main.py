@@ -8,7 +8,7 @@ from api.databases.mongo.mongo_connection import create_mongo_client
 from api.services.products.router import products
 
 
-def create_app():
+def create_app() -> FastAPI:
     app = FastAPI(debug=True)
     app.add_middleware(
         CORSMiddleware,

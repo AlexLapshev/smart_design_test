@@ -4,6 +4,7 @@ app:
   workers: 4
   reload: true
   origins: http://0.0.0.0:8080, http://localhost:8080, http://localhost
+  base_url: http://0.0.0.0:1984/api/v1
 databases:
   mongo_url: mongodb://smart_design_user:123456@0.0.0.0:27017/smart_design_mongo
 

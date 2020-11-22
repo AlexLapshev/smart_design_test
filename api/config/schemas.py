@@ -7,6 +7,7 @@ class SettingsDB(BaseSettings):
 
 
 class SettingsApp(BaseSettings):
+    base_url: str
     origins: List[str]
     reload: bool = False
     host: str

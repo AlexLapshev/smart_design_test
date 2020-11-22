@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, PositiveFloat, PositiveInt
 
@@ -25,3 +25,8 @@ class FiltersSchema(BaseModel):
     operating_system: Optional[str]
     brand: Optional[str]
     color: Optional[str]
+
+
+class ProductsWithNextSchema(BaseModel):
+    products: List[ProductSchema]
+    next: Optional[str]

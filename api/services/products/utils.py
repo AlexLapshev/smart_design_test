@@ -1,5 +1,6 @@
 from loguru import logger
 
+from api.config.main import main_config
 from api.services.products.schemas import FiltersSchema
 
 
@@ -8,7 +9,7 @@ class FilterCreator:
     def __init__(self, filters: FiltersSchema):
         self.filters = filters
 
-    def filter_dict(self):
+    def filter_dict(self) -> dict:
         created_filters = {}
         if self.filters.name:
             created_filters.update({'name': {'$regex': self.filters.name, '$options': 'i'}})
@@ -24,3 +25,28 @@ class FilterCreator:
         created_filters.update(integer_filters)
         logger.debug(f'filter dict created: {created_filters}')
         return created_filters
+
+
+class QueryUrlCreator:
+
+    @staticmethod
+    def create_next_url(filters: FiltersSchema,
+                        skip: int,
+                        total_products: int,
+                        length: int = 10) -> str or None:
+        next_url = None
+        if skip + length < total_products:
+            query_string = '&'.join([f'{query_param}={value}'
+                                     for query_param, value in filters.dict().items() if value])
+            logger.debug(query_string)
+            next_url = main_config.base_url + '/products?' + query_string + f'&skip={skip+length}' + f'&length={length}'
+        return next_url
+
+
+class ProductSerializer:
+    def __init__(self, product: dict):
+        self.product = product
+
+    def replace_id_key(self):
+        self.product['id'] = self.product.pop('_id')
+        return self.product

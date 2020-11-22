@@ -14,6 +14,6 @@ async def get_mongo_client(mongo_client: AsyncIOMotorClient = Depends(_get_mongo
     return mongo_client
 
 
-async def create_mongo_client():
+async def create_mongo_client() -> AsyncIOMotorClient:
     mongo_client = motor.motor_asyncio.AsyncIOMotorClient(main_config.mongo_url)
     return mongo_client
