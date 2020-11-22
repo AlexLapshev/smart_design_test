@@ -35,12 +35,11 @@ async def filtered_products(name: Optional[str] = None,
         raise HTTPException(status_code=400, detail='max length is 50')
     filters = FiltersSchema(name=name, ram_size=ram_size, screen_size=screen_size,
                             brand=brand, color=color, operating_system=operating_system)
-    copy_filters = copy.deepcopy(filters)
     created_filters = FilterCreator(filters).filter_dict()
     if filtered_pr := await ProductCRUD(mongo_client).get_filtered_products(filters=created_filters, skip=skip,
                                                                             length=length):
         total_products = await ProductCRUD(mongo_client).count_products(created_filters)
-        next_url = QueryUrlCreator.create_next_url(filters=copy_filters,
+        next_url = QueryUrlCreator.create_next_url(filters=filters,
                                                    skip=skip,
                                                    length=length,
                                                    total_products=total_products)
