@@ -61,6 +61,10 @@ DELETE `http://0.0.0.0:1984/api/v1/products` delete product: needs query_paramet
 
 `curl -X POST "http://0.0.0.0:1984/api/v1/products" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"id\":4,\"name\":\"Honor 8X\",\"description\":\"Honor 8X description\",\"parameters\":{\"color\":\"black\",\"brand\":\"Honor\",\"screen_size\":4.7,\"ram_size\":4,\"operating_system\":\"Android\"}}"`
 
+**retrieve all products**
+
+`curl -X GET "http://0.0.0.0:1984/api/v1/products" -H  "accept: application/json"`
+
 **retrieve product**
 
 ###### by id
