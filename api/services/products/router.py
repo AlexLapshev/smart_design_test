@@ -1,0 +1,50 @@
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+from motor.motor_asyncio import AsyncIOMotorClient
+from starlette.responses import JSONResponse, Response
+
+from api.databases.mongo.mongo_connection import get_mongo_client
+from api.services.products.products_crud import ProductCRUD
+from api.services.products.schemas import ProductSchema, FiltersSchema
+
+products = APIRouter()
+
+
+@products.get('/{product_id}', response_model=ProductSchema)
+async def one_product(product_id: int, mongo_client: AsyncIOMotorClient = Depends(get_mongo_client)):
+    if product := await ProductCRUD(mongo_client).get_product_by_id(product_id):
+        return ProductSchema(id=product['_id'], name=product['name'], description=product['description'],
+                             parameters=product['parameters'])
+    else:
+        raise HTTPException(status_code=404, detail='product not found')
+
+
+@products.get('')
+async def filtered_products(name: Optional[str] = None,
+                            ram_size: Optional[int] = None,
+                            screen_size: Optional[float] = None,
+                            operating_system: Optional[str] = None,
+                            brand: Optional[str] = None,
+                            color: Optional[str] = None,
+                            mongo_client: AsyncIOMotorClient = Depends(get_mongo_client)):
+    filters = FiltersSchema(name=name, ram_size=ram_size, screen_size=screen_size,
+                            brand=brand, color=color, operating_system=operating_system)
+    if product := await ProductCRUD(mongo_client).get_filtered_products(filters=filters):
+        return product
+    else:
+        raise HTTPException(status_code=404, detail='product not found')
+
+
+@products.post('')
+async def create_product(product: ProductSchema, mongo_client: AsyncIOMotorClient = Depends(get_mongo_client)):
+    if await ProductCRUD(mongo_client).create_product(product):
+        return JSONResponse(status_code=201, content={'result': 'product created'})
+    raise HTTPException(status_code=409, detail='product with this id already exists')
+
+
+@products.delete('')
+async def delete_product(product_id: int, mongo_client: AsyncIOMotorClient = Depends(get_mongo_client)):
+    if await ProductCRUD(mongo_client).delete_product(product_id):
+        return Response(status_code=204)
+    raise HTTPException(status_code=404, detail='product not found')

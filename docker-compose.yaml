@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  app_backend:
+    build: ./api
+    container_name: app_backend
+    environment:
+      PRODUCTION: 'yes'
+    ports:
+      - "1984:1984"
+    command: bash -c "python -m api.main"
+    depends_on:
+      - smart_design_mongo
+  smart_design_mongo:
+    image: mongo:latest
+    container_name: smart_design_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: smart_design_user
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: smart_design_mongo
+    volumes:
+      - ./api/databases/mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - 27017:27017
